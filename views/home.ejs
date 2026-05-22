@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Url shortner</title>
+</head>
+<body>
+    <h1>URL SHORTNER</h1>
+    <form action="/shorten" method="POST">
+        <input type="text" name="url" placeholder="Enter URL" required />
+        <button type="submit">Shorten</button>
+    </form>
+    <h2>All URLs</h2>
+
+<ul>
+<% if (urls && urls.length > 0) { %>
+    <% urls.forEach(function(item) { %>
+        <li>
+            <a href="/<%= item.shortId %>">
+                http://localhost:3000/<%= item.shortId %>
+            </a>
+            → <%= item.redirectURL %>
+        </li>
+    <% }) %>
+<% } else { %>
+    <p>No URLs yet</p>
+<% } %>
+</ul>
+    
+</body>
+</html>

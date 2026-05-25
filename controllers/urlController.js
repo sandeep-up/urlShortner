@@ -39,10 +39,17 @@ const createShortURL= async function(req,res){
 };
 function redirectURL(req,res){
     const shortId = req.params.shortId;
-    url.findOne({ shortId: shortId }).then(function(entry){
+
+    url.findOneAndUpdate(
+        { shortId: shortId },
+        { $inc: { clicks: 1 } },
+        { new: true }
+    ).then(function(entry){
+
         if(!entry){
             return res.send("URL not found");
         }
+
         res.redirect(entry.redirectURL);
     });
 }

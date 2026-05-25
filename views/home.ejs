@@ -13,20 +13,36 @@
     </form>
     <h2>All URLs</h2>
 
-<ul>
-<% if (urls && urls.length > 0) { %>
-    <% urls.forEach(function(item) { %>
-        <li>
-            <a href="/<%= item.shortId %>">
-                http://localhost:3000/<%= item.shortId %>
-            </a>
-            → <%= item.redirectURL %>
-        </li>
-    <% }) %>
-<% } else { %>
-    <p>No URLs yet</p>
-<% } %>
-</ul>
+<table border="1">
+    <tr>
+        <th>S.No</th>
+        <th>Short URL</th>
+        <th>Redirect URL</th>
+        <th>Clicks</th>
+    </tr>
+
+    <% if (urls && urls.length > 0) { %>
+        <% urls.forEach(function(item, index) { %>
+            <tr>
+                <td><%= index + 1 %></td>
+
+                <td>
+                    <a href="/<%= item.shortId %>">
+                        http://localhost:3000/<%= item.shortId %>
+                    </a>
+                </td>
+
+                <td><%= item.redirectURL %></td>
+
+                <td><%= item.clicks %></td>
+            </tr>
+        <% }) %>
+    <% } else { %>
+        <tr>
+            <td colspan="4">No URLs yet</td>
+        </tr>
+    <% } %>
+</table>
     
 </body>
 </html>

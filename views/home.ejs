@@ -3,46 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Url shortner</title>
+    <title>URL Shortner</title>
 </head>
 <body>
     <h1>URL SHORTNER</h1>
     <form action="/shorten" method="POST">
-        <input type="text" name="url" placeholder="Enter URL" required />
+        <input type="text" name="url" placeholder="Enter URL" required>
         <button type="submit">Shorten</button>
     </form>
-    <h2>All URLs</h2>
-
-<table border="1">
-    <tr>
-        <th>S.No</th>
-        <th>Short URL</th>
-        <th>Redirect URL</th>
-        <th>Clicks</th>
-    </tr>
-
-    <% if (urls && urls.length > 0) { %>
-        <% urls.forEach(function(item, index) { %>
-            <tr>
-                <td><%= index + 1 %></td>
-
-                <td>
-                    <a href="/<%= item.shortId %>">
-                        http://localhost:3000/<%= item.shortId %>
-                    </a>
-                </td>
-
-                <td><%= item.redirectURL %></td>
-
-                <td><%= item.clicks %></td>
-            </tr>
-        <% }) %>
-    <% } else { %>
+    <h2>Your URLs</h2>
+    <table border="1">
         <tr>
-            <td colspan="4">No URLs yet</td>
+            <th>S.No</th>
+            <th>Short URL</th>
+            <th>Original URL</th>
+            <th>Clicks</th>
         </tr>
-    <% } %>
-</table>
-    
+        <% if(urls.length > 0){ %>
+            <% urls.forEach(function(item,index){ %>
+                <tr>
+                    <td>
+                        <%= index + 1 %>
+                    </td>
+                    <td>
+                        <a href="/<%= item.shortId %>">
+                            http://localhost:3000/<%= item.shortId %>
+                        </a>
+                    </td>
+                    <td>
+                        <%= item.redirectURL %>
+                    </td>
+                    <td>
+                        <%= item.clicks %>
+                    </td>
+                </tr>
+            <% }) %>
+        <% } else { %>
+            <tr>
+                <td colspan="4">
+                    No URLs Found
+                </td>
+            </tr>
+        <% } %>
+    </table>
 </body>
 </html>

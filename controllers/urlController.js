@@ -1,59 +1,67 @@
-const url=require("../models/urlModel");
-const createShortURL= async function(req,res){
-     const originalURL = req.body.url;
-
-    // 1. Check if URL already exists
-    const existing = await url.findOne({ redirectURL: originalURL });
-
-    if(existing){
-        const allUrls = await url.find();
-
-        return res.render("home", {
-            shortUrl: "http://localhost:3000/" + existing.shortId,
-            urls: allUrls
-        });
+const url = require("../models/urlModel");
+const createShortURL = async function(req,res){
+    const originalURL = req.body.url;
+    if(!originalURL){
+        return res.send("URL is required");
     }
-      // Generate unique shortId
+    const existing = await url.findOne({
+        redirectURL:originalURL
+    });
+    if(existing){
+        const alreadyExists = existing.createdBy.some(
+            id => id.toString() === req.user.id
+        );
+        if(!alreadyExists){
+            existing.createdBy.push(req.user.id);
+            await existing.save();
+        }
+        return res.redirect("/");
+    }
     let shortId;
     let isUnique = false;
-
     while(!isUnique){
         shortId = Math.random().toString(36).substring(2,8);
-
-        const existingId = await url.findOne({ shortId: shortId });
-
+        const existingId = await url.findOne({
+            shortId:shortId
+        });
         if(!existingId){
             isUnique = true;
         }
     }
-      const newURL= new url({
-          shortId:shortId,
-          redirectURL:originalURL
-      });
-      await newURL.save();
-      const allUrls=await url.find();
-    res.render("home", {
-    shortUrl: "http://localhost:3000/" + shortId,
-    urls:allUrls
-});
-};
-function redirectURL(req,res){
-    const shortId = req.params.shortId;
-
-    url.findOneAndUpdate(
-        { shortId: shortId },
-        { $inc: { clicks: 1 } },
-        { new: true }
-    ).then(function(entry){
-
-        if(!entry){
-            return res.send("URL not found");
-        }
-
-        res.redirect(entry.redirectURL);
+    const newURL = new url({
+        shortId:shortId,
+        redirectURL:originalURL,
+        createdBy:[req.user.id]
     });
-}
-module.exports={
+    await newURL.save();
+    res.redirect("/");
+};
+const redirectURL = async function(req,res){
+    const shortId = req.params.shortId;
+    const entry = await url.findOneAndUpdate(
+        {
+            shortId:shortId
+        },
+        {
+            $inc:{
+                clicks:1
+            },
+            $push:{
+                visitHistory:{
+                    timestamp:Date.now()
+                }
+            }
+        },
+        {
+            new:true
+        }
+    );
+    if(!entry){
+        return res.send("URL not found");
+    }
+    res.redirect(entry.redirectURL);
+};
+module.exports = {
     createShortURL,
     redirectURL
-}
+};

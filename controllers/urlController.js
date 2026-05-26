@@ -61,7 +61,25 @@ const redirectURL = async function(req,res){
     }
     res.redirect(entry.redirectURL);
 };
+async function deleteUrl(req,res){
+      const shortId=req.params.shortId;
+      const existingUrl= await url.findOne({shortId:shortId});
+      if(!existingUrl) {
+        return res.send("There is no such url to delete");
+         
+      }
+      const isOwner= existingUrl.createdBy.some(
+        id=> id.toString()===req.user.id
+      );
+      const isAdmin=req.user.role==="admin";
+      if(!isOwner&&!isAdmin){
+        res.send("Access denied");
+      }
+     await url.deleteOne({shortId:shortId});
+      res.redirect("/");
+};
 module.exports = {
     createShortURL,
-    redirectURL
+    redirectURL,
+    deleteUrl
 };

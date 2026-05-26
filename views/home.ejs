@@ -18,6 +18,7 @@
             <th>Short URL</th>
             <th>Original URL</th>
             <th>Clicks</th>
+            <th>Delete</th>
         </tr>
         <% if(urls.length > 0){ %>
             <% urls.forEach(function(item,index){ %>
@@ -35,6 +36,11 @@
                     </td>
                     <td>
                         <%= item.clicks %>
+                    </td>
+                    <td>
+                        <form action="/delete/<%=item.shortId%>" method="post">
+                            <button type="submit">delete</button>
+                        </form>
                     </td>
                 </tr>
             <% }) %>

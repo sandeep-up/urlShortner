@@ -37,7 +37,9 @@ async function loginUser(req,res){
       }
       const token=jwt.sign(
              {id:existinguser._id,
-             email:existinguser.email},
+             email:existinguser.email,
+             role:existinguser.role
+            },
              "SECRET_KEY"
       );
       res.cookie("token",token);
